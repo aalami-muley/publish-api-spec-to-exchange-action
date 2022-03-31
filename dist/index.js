@@ -8,13 +8,13 @@
 
 
 const axios = __nccwpck_require__(7416);
-const BASE_URL = process.env.BASE_URL || "https://eu1.anypoint.mulesoft.com/designcenter/api-designer";
+const BASE_URL = process.env.BASE_URL || "https://eu1.anypoint.mulesoft.com";
 
 module.exports = {
     get(credentials) {
         return axios.create({
             baseURL: BASE_URL,
-            timeout: 5000,
+            timeout: 30000,
             headers: {
                 'Authorization': `Bearer ${credentials.token}`,
                 "x-organization-id": credentials.organizationId,
@@ -42,22 +42,26 @@ const client = __nccwpck_require__(1372);
 
 module.exports = {
     async getProject(credentials, name) {
-        const projects = (await client.get(credentials).get("/projects")).data;
+        const projects = (await client.get(credentials).get("/designcenter/api-designer/projects")).data;
         return projects.filter(function (project) {
             return project.name === name;
         })[0];
     },
     async getBranch(credentials, projectId, name) {
-        const branches = (await client.get(credentials).get(`/projects/${projectId}/branches`)).data;
+        const branches = (await client.get(credentials).get(`/designcenter/api-designer/projects/${projectId}/branches`)).data;
         return branches.filter(function (branch) {
             return branch.name === name;
         })[0];
     },
     async releaseLock(credentials, projectId, branch) {
-        (await client.get(credentials).post(`/projects/${projectId}/branches/${branch}/releaseLock`, {})).data;
+        (await client.get(credentials).post(`/designcenter/api-designer/projects/${projectId}/branches/${branch}/releaseLock`, {})).data;
     },
     async aquireLock(credentials, projectId, branch) {
-        (await client.get(credentials).post(`/projects/${projectId}/branches/${branch}/acquireLock`, {})).data;
+        (await client.get(credentials).post(`/designcenter/api-designer/projects/${projectId}/branches/${branch}/acquireLock`, {})).data;
+    },
+    async getAssets(credentials) {
+        const url = `/exchange/api/v2/assets?search=&types=api-group&types=connector&types=custom&types=data-weave-library&types=evented-api&types=example&types=extension&types=http-api&types=policy&types=raml-fragment&types=rest-api&types=soap-api&types=template&status=development&status=published&status=deprecated&domain=&organizationId=${credentials.organizationId}&masterOrganizationId=&offset=0&limit=20&sharedWithMe=`;
+        return (await client.get(credentials).get(url)).data;
     }
 }
 
@@ -4746,19 +4750,31 @@ module.exports = async function (name, branch, credentials, { spec, apiVersion, 
         throw new Error(`Projet with name ${name} is not found.`);
     }
     let projectId = project.id;
+    log.info(`Using project with id ${projectId}`);
+
+    const assets = await lib.getAssets(credentials);
+    const asset = assets.filter(function (asset) {
+        return asset.assetId === assetId && asset.version === version && asset.versionGroup === apiVersion;
+    })[0];
+
+    if(asset) {
+        throw new Error(`Asset with id ${assetId} and version ${version} and apiVersion ${apiVersion} is already created.`);
+    }
 
     try {
         await lib.aquireLock(credentials, projectId, branch);
         log.info(`Successfully aquired a new lock.`);
 
-        const data = { name, apiVersion, version, "main": spec, classifier, assetId, groupId };
-        console.log(data);
-        (await client.get(credentials).post(`/projects/${projectId}/branches/${branch}/publish/exchange`, data));
+        const data = { name, apiVersion, version, "tags": [], "main": spec, assetId, "groupId": credentials.organizationId, classifier, "isVisual": false, "metadata": { "projectId": projectId, "branchId": branch }, "publishList": [], "originalFormatVersion": "1.0", "status": "published" };
+        (await client.get(credentials).post(`/designcenter/api-designer/projects/${projectId}/branches/${branch}/publish/exchange`, data));
+        log.info(`Successfully published a new version of a project with data ${JSON.stringify(data)}.`);
         log.info(`Project successfully published to Exchange.`);
     } catch (error) {
-        //log.error(error);
+        log.error(error);
+        throw error;
     } finally {
         await lib.releaseLock(credentials, projectId, branch);
+        log.info(`Lock is successfully released.`);
     }
 }
 

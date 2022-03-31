@@ -1,13 +1,13 @@
 "use strict";
 
 const axios = require("axios");
-const BASE_URL = process.env.BASE_URL || "https://eu1.anypoint.mulesoft.com/designcenter/api-designer";
+const BASE_URL = process.env.BASE_URL || "https://eu1.anypoint.mulesoft.com";
 
 module.exports = {
     get(credentials) {
         return axios.create({
             baseURL: BASE_URL,
-            timeout: 5000,
+            timeout: 30000,
             headers: {
                 'Authorization': `Bearer ${credentials.token}`,
                 "x-organization-id": credentials.organizationId,

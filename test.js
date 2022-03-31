@@ -8,12 +8,12 @@ const branch = "master";
 let classifier = "raml";
 let subType;
 
-let name = "raml-pipeline-demo";
-const spec = name + ".raml";
+let name = "Import Specification Action DEMO";
 
-const apiVersion = "0.1";
-const version = "1.0.0";
+const apiVersion = "v1";
+const version = "1.0.1";
 const assetId = "import-specification-action-demo";
+const spec = assetId + ".raml";
 
 (async function () {
     await require("./publish")(name, branch, { token, organizationId, userId }, { spec, apiVersion, version, assetId, "groupId": organizationId, classifier });
