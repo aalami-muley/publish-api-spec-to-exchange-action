@@ -1,0 +1,22 @@
+on: [push]
+
+jobs:
+  import_to_design_center:
+    runs-on: ubuntu-latest
+    name: A job to publish a specification to exchange
+    steps:
+      - name: Publish Specification
+        id: publish_specification
+        uses: aalami-muley/publish-api-spec-exchange-action@main
+        with:
+          ORGANIZATION_ID: 'f60b1434-1059-4f0f-a28c-ccf4a9be05b2'
+          USER_ID: '612cf2dd-9f92-4a08-97ed-f6be4faf06ca'
+          BRANCH: 'master'
+          CLASSIFIER: 'raml'
+          PROJECT_NAME: 'Import Specification Action DEMO'
+          PROJECT_DIRECTORY: '${{ github.workspace }}/test'
+          SPEC_PATH: 'import-specification-action-demo.raml'
+          TOKEN: '${{ secrets.TOKEN }}'
+          VERSION: '1.0.0'
+          API_VERSION: '0.1'
+          ASSET: 'import-specification-action-demo'

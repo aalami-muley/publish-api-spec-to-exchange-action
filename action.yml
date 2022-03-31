@@ -1,0 +1,30 @@
+name: "Publish a specification"
+description: "Publish a specification project to Exchange"
+author: "Ahmed ALAMI"
+
+inputs:
+  ORGANIZATION_ID:
+    description: "The organization id"
+    required: true
+  USER_ID:
+    description: "The user id used to create the design center project"
+    required: true
+  CLASSIFIER:
+    description: "The classifier of the specification project"
+    required: true
+  BRANCH:
+    description: "The branch used to commit the specification project"
+    required: true
+  PROJECT_NAME:
+    description: "The specification project name"
+    required: true
+  SPEC_PATH:
+    description: "The relative path of the root specification file"
+    required: true
+  TOKEN:
+    description: "The token used to authorized the anyoint actions"
+    required: true
+
+runs:
+  using: "node16"
+  main: "dist/index.js"
