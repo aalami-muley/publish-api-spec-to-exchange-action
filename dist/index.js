@@ -4740,7 +4740,7 @@ const client = __nccwpck_require__(1372);
 const lib = __nccwpck_require__(8771);
 const log = __nccwpck_require__(4049);
 
-module.exports = async function (name, branch, credentials, { spec, apiVersion, version, assetId, groupId, classifier }) {
+module.exports = async function (name, branch, credentials, { spec, apiVersion, version, assetId, classifier }) {
     apiVersion = apiVersion || "0.1";
     version = version || "1.0.0";
     classifier = classifier || "raml";
@@ -4944,14 +4944,14 @@ const main = async () => {
         const userId = core.getInput('USER_ID');
         const branch = core.getInput('BRANCH');
         const classifier = core.getInput('CLASSIFIER');
-        const subType = core.getInput('SUB_TYPE');
         const name = core.getInput('PROJECT_NAME');
-        const directory = core.getInput('PROJECT_DIRECTORY');
         const spec = core.getInput('SPEC_PATH');
-        const files = core.getInput('FILES_PATHS');
+        const assetId = core.getInput('ASSET_ID');
+        const version = core.getInput('VERSION');
+        const apiVersion = core.getInput('API_VERSION');
         const token = core.getInput('TOKEN');
 
-        await __nccwpck_require__(1376)(directory, branch, { token, organizationId, userId }, { directory, name, spec, files, classifier, subType });
+        await __nccwpck_require__(1376)(name, branch, { token, organizationId, userId }, { spec, apiVersion, version, assetId, classifier });
     } catch (error) {
         core.setFailed(error.message);
     }

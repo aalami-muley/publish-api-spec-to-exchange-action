@@ -6,7 +6,7 @@ const client = require("./client");
 const lib = require("./lib");
 const log = require("./log");
 
-module.exports = async function (name, branch, credentials, { spec, apiVersion, version, assetId, groupId, classifier }) {
+module.exports = async function (name, branch, credentials, { spec, apiVersion, version, assetId, classifier }) {
     apiVersion = apiVersion || "0.1";
     version = version || "1.0.0";
     classifier = classifier || "raml";
