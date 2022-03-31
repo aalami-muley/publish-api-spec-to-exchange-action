@@ -7,7 +7,7 @@ jobs:
     steps:
       - name: Publish Specification
         id: publish_specification
-        uses: aalami-muley/publish-api-spec-exchange-action@main
+        uses: aalami-muley/publish-api-spec-to-exchange-action@main
         with:
           ORGANIZATION_ID: 'f60b1434-1059-4f0f-a28c-ccf4a9be05b2'
           USER_ID: '612cf2dd-9f92-4a08-97ed-f6be4faf06ca'
