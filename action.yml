@@ -24,6 +24,15 @@ inputs:
   TOKEN:
     description: "The token used to authorized the anyoint actions"
     required: true
+  ASSET:
+    description: "The related asset name"
+    required: true
+  API_VERSION:
+    description: "The realted api version"
+    required: true
+  VERSION:
+    description: "The related asset version"
+    required: true
 
 runs:
   using: "node16"
